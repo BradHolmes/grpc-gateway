@@ -11,6 +11,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	pb "github.com/grpc-ecosystem/grpc-gateway/v2/runtime/internal/examplepb"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
@@ -142,9 +143,9 @@ func TestForwardResponseStream(t *testing.T) {
 						t.Errorf("stream responseBody failed %v", err)
 					}
 
-					b, err = marshaler.Marshal(map[string]interface{}{"result": rb.XXX_ResponseBody()})
+					b, err = marshaler.Marshal(map[string]interface{}{"result": rb.XXX_ResponseBody(), "header_metadata": metadata.MD{}})
 				} else {
-					b, err = marshaler.Marshal(map[string]interface{}{"result": msg.pb})
+					b, err = marshaler.Marshal(map[string]interface{}{"result": msg.pb, "header_metadata": metadata.MD{}})
 				}
 
 				if err != nil {
@@ -245,7 +246,7 @@ func TestForwardResponseStreamCustomMarshaler(t *testing.T) {
 				if msg.err != nil {
 					t.Skip("checking erorr encodings")
 				}
-				b, err := marshaler.Marshal(map[string]proto.Message{"result": msg.pb})
+				b, err := marshaler.Marshal(map[string]interface{}{"result": msg.pb, "header_metadata": metadata.MD{}})
 				if err != nil {
 					t.Errorf("marshaler.Marshal() failed %v", err)
 				}
