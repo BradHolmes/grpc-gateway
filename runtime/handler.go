@@ -72,7 +72,7 @@ func ForwardResponseStream(ctx context.Context, mux *ServeMux, marshaler Marshal
 		case isHTTPBody:
 			buf = httpBody.GetData()
 		default:
-			result := map[string]interface{}{"result": resp}
+			result := map[string]interface{}{"result": resp, "header_metadata": md.HeaderMD}
 			if rb, ok := resp.(responseBody); ok {
 				result["result"] = rb.XXX_ResponseBody()
 			}
