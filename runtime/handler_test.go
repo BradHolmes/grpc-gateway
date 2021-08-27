@@ -112,6 +112,7 @@ func TestForwardResponseStream(t *testing.T) {
 			w.Body.Close()
 
 			var want []byte
+			counter := 0
 			for i, msg := range tt.msgs {
 				if msg.err != nil {
 					if i == 0 {
@@ -143,10 +144,11 @@ func TestForwardResponseStream(t *testing.T) {
 						t.Errorf("stream responseBody failed %v", err)
 					}
 
-					b, err = marshaler.Marshal(map[string]interface{}{"result": rb.XXX_ResponseBody(), "header_metadata": metadata.MD{}})
+					b, err = marshaler.Marshal(map[string]interface{}{"result": rb.XXX_ResponseBody(), "header_metadata": metadata.MD{}, "count": counter})
 				} else {
-					b, err = marshaler.Marshal(map[string]interface{}{"result": msg.pb, "header_metadata": metadata.MD{}})
+					b, err = marshaler.Marshal(map[string]interface{}{"result": msg.pb, "header_metadata": metadata.MD{}, "count": counter})
 				}
+				counter++
 
 				if err != nil {
 					t.Errorf("marshaler.Marshal() failed %v", err)
@@ -242,16 +244,18 @@ func TestForwardResponseStreamCustomMarshaler(t *testing.T) {
 			w.Body.Close()
 
 			var want []byte
+			counter := 0
 			for _, msg := range tt.msgs {
 				if msg.err != nil {
 					t.Skip("checking erorr encodings")
 				}
-				b, err := marshaler.Marshal(map[string]interface{}{"result": msg.pb, "header_metadata": metadata.MD{}})
+				b, err := marshaler.Marshal(map[string]interface{}{"result": msg.pb, "header_metadata": metadata.MD{}, "count": counter})
 				if err != nil {
 					t.Errorf("marshaler.Marshal() failed %v", err)
 				}
 				want = append(want, b...)
 				want = append(want, "\n"...)
+				counter++
 			}
 
 			if string(body) != string(want) {

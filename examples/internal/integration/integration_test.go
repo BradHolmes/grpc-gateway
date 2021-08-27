@@ -1658,7 +1658,7 @@ func TestResponseBodyStream(t *testing.T) {
 		name:       "stream case",
 		url:        "http://localhost:%d/responsebody/stream/foo",
 		wantStatus: http.StatusOK,
-		wantBody:   []string{`{"header_metadata":{"content-type":["application/grpc"]},"result":{"data":"first foo"}}`, `{"header_metadata":{"content-type":["application/grpc"]},"result":{"data":"second foo"}}`},
+		wantBody:   []string{`{"count":0,"header_metadata":{"content-type":["application/grpc"]},"result":{"data":"first foo"}}`, `{"count":1,"header_metadata":{"content-type":["application/grpc"]},"result":{"data":"second foo"}}`},
 	}}
 
 	port := 8088

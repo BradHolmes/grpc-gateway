@@ -46,6 +46,7 @@ func ForwardResponseStream(ctx context.Context, mux *ServeMux, marshaler Marshal
 	}
 
 	var wroteHeader bool
+	var counter uint32 = 0
 	for {
 		resp, err := recv()
 		if err == io.EOF {
@@ -72,12 +73,17 @@ func ForwardResponseStream(ctx context.Context, mux *ServeMux, marshaler Marshal
 		case isHTTPBody:
 			buf = httpBody.GetData()
 		default:
-			result := map[string]interface{}{"result": resp, "header_metadata": md.HeaderMD}
+			result := map[string]interface{}{
+				"result": resp,
+				"header_metadata": md.HeaderMD,
+				"count": counter,
+			}
 			if rb, ok := resp.(responseBody); ok {
 				result["result"] = rb.XXX_ResponseBody()
 			}
 
 			buf, err = marshaler.Marshal(result)
+			counter++
 		}
 
 		if err != nil {
